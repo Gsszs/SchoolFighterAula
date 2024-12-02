@@ -6,7 +6,8 @@ public class PlayerController : MonoBehaviour
     // Setando variáveis
 
     private Rigidbody2D playerRigidBody;
-    public float playerSpeed = 1f;
+    public float playerSpeed = 0.6f;
+    private float currentSpeed;
 
     public Vector2 playerDirection;
 
@@ -18,11 +19,14 @@ public class PlayerController : MonoBehaviour
     private float timeCross = 1f;
     private bool comboControll;
 
+    private bool isDead;
+
     void Start()
     {
         // Iniciando variaveis junto ao game com componentes para sua função.
         playerRigidBody = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
+        currentSpeed = playerSpeed;
     }
 
     void Update()
@@ -33,26 +37,23 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            if (isWalking == false)
+            if (punchCount < 2)
             {
-
-                if (punchCount < 2)
+                PlayerJab();
+                punchCount++;
+                if (!comboControll)
                 {
-                    PlayerJab();
-                    punchCount++;
-                    if (!comboControll)
-                    {
-                        StartCoroutine(CrossController());
-                    }
-                }
 
-                else if (punchCount >= 2)
-                {
-                    PlayerCross();
-                    punchCount = 0;
+                    StartCoroutine(CrossController());
                 }
-                StopCoroutine(CrossController());
             }
+
+            else if (punchCount >= 2)
+            {
+                PlayerCross();
+                punchCount = 0;
+            }
+            StopCoroutine(CrossController());
         }
     }
 
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
             isWalking = false;
         }
 
-        playerRigidBody.MovePosition(playerRigidBody.position + playerSpeed * Time.fixedDeltaTime * playerDirection);
+        playerRigidBody.MovePosition(playerRigidBody.position + currentSpeed * Time.fixedDeltaTime * playerDirection);
     }
 
     void PlayerMove()
@@ -114,5 +115,15 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(timeCross);
         punchCount = 0;
         comboControll = false;
+    }
+
+    void ZeroSpeed()
+    {
+        currentSpeed = 0;
+    }
+
+    void ResetSpeed()
+    {
+        currentSpeed = playerSpeed;
     }
 }
