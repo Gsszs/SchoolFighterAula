@@ -1115,6 +1115,7 @@ GameObject:
   - component: {fileID: 1173089040}
   - component: {fileID: 1173089039}
   - component: {fileID: 1173089038}
+  - component: {fileID: 1173089041}
   m_Layer: 0
   m_Name: EnemyMelee
   m_TagString: Untagged
@@ -1165,7 +1166,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 4723107735738678597, guid: 8124f997555d66f489240257d107b5b6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
@@ -1287,6 +1288,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1173089041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173089035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbbc2d91138068046890ea904bab6d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  facingRigth: 0
+  isDead: 0
 --- !u!1 &1173551879
 GameObject:
   m_ObjectHideFlags: 0
