@@ -20,7 +20,17 @@ public class EnemyMeleeController : MonoBehaviour
 
     private float horizontalForce;
     private float verticalForce;
-    
+
+    private float attackRate = 1f;
+    private float nextAttack;
+
+    public int maxHealth;
+    public int currentHealth;
+
+    public float staggerTime = 0.5f;
+    public float damageTimer;
+    public bool isTakingDamage;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -63,6 +73,14 @@ public class EnemyMeleeController : MonoBehaviour
             isWalking = true;
         }
 
+        if (damageTimer >= staggerTime)
+        {
+            isTakingDamage = false;
+            damageTimer = 0;
+
+            ResetSpeed();
+        }
+
         UpdateAnimator();
     }
 
@@ -84,10 +102,39 @@ public class EnemyMeleeController : MonoBehaviour
         }
 
         rb.linearVelocity = new Vector2(horizontalForce * currentSpeed, verticalForce * currentSpeed);
+
+        if (Mathf.Abs(targetDistance.x) < 0.2f && Mathf.Abs(targetDistance.y) < 0.05f && Time.time > nextAttack)
+        {
+            animator.SetTrigger("Attack");
+            ZeroSpeed();
+            nextAttack = Time.time + attackRate;
+        }
     }
 
     void UpdateAnimator()
     {
         animator.SetBool("isWalking", isWalking);
+    }
+
+    public void TakeTamage (int damage)
+    {
+        if (!isDead)
+        {
+            isTakingDamage = true;
+
+            currentHealth -= damage;
+
+            animator.SetTrigger("hitDamage");
+        }
+    }
+
+    void ZeroSpeed()
+    {
+        currentSpeed = 0;
+    }
+
+    void ResetSpeed()
+    {
+        currentSpeed = enemySpeed;
     }
 }
