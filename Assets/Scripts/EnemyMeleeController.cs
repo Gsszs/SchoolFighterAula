@@ -38,6 +38,8 @@ public class EnemyMeleeController : MonoBehaviour
         target = FindAnyObjectByType<PlayerController>().transform;
 
         currentSpeed = enemySpeed;
+
+        currentHealth = maxHealth;
     }
 
     void Update()
@@ -86,28 +88,31 @@ public class EnemyMeleeController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 targetDistance = target.position - this.transform.position;
-
-        horizontalForce = targetDistance.x / Mathf.Abs(targetDistance.x);
-
-        if (walkTimer >= Random.Range(1f, 2f))
+        if (!isDead)
         {
-            verticalForce = Random.Range(-1, 2);
-            walkTimer = 0;
-        }
+            Vector3 targetDistance = target.position - this.transform.position;
 
-        if (Mathf.Abs(targetDistance.x) < 0.2f)
-        {
-            horizontalForce = 0;
-        }
+            horizontalForce = targetDistance.x / Mathf.Abs(targetDistance.x);
 
-        rb.linearVelocity = new Vector2(horizontalForce * currentSpeed, verticalForce * currentSpeed);
+            if (walkTimer >= Random.Range(1f, 2f))
+            {
+                verticalForce = Random.Range(-1, 2);
+                walkTimer = 0;
+            }
 
-        if (Mathf.Abs(targetDistance.x) < 0.2f && Mathf.Abs(targetDistance.y) < 0.05f && Time.time > nextAttack)
-        {
-            animator.SetTrigger("Attack");
-            ZeroSpeed();
-            nextAttack = Time.time + attackRate;
+            if (Mathf.Abs(targetDistance.x) < 0.2f)
+            {
+                horizontalForce = 0;
+            }
+
+            rb.linearVelocity = new Vector2(horizontalForce * currentSpeed, verticalForce * currentSpeed);
+
+            if (Mathf.Abs(targetDistance.x) < 0.2f && Mathf.Abs(targetDistance.y) < 0.05f && Time.time > nextAttack)
+            {
+                animator.SetTrigger("Attack");
+                ZeroSpeed();
+                nextAttack = Time.time + attackRate;
+            }
         }
     }
 
@@ -125,6 +130,15 @@ public class EnemyMeleeController : MonoBehaviour
             currentHealth -= damage;
 
             animator.SetTrigger("hitDamage");
+
+            if (currentHealth <= 0)
+            {
+                isDead = true;
+
+                ZeroSpeed();
+
+                animator.SetTrigger("Dead");
+            }
         }
     }
 
@@ -136,5 +150,10 @@ public class EnemyMeleeController : MonoBehaviour
     void ResetSpeed()
     {
         currentSpeed = enemySpeed;
+    }
+
+    public void DisableEnemy()
+    {
+        this.gameObject.SetActive(false);
     }
 }
