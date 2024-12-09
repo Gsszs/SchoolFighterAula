@@ -1,37 +1,39 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // Setando variáveis
-
     private Rigidbody2D playerRigidBody;
+    
     public float playerSpeed = 0.6f;
-    private float currentSpeed;
+    public float currentSpeed;
 
     public Vector2 playerDirection;
 
     private bool isWalking;
-    private bool playerFacingRigth = true;
+
     private Animator playerAnimator;
 
+    private bool playerFacingRight = true;
+
     private int punchCount;
-    private float timeCross = 1f;
-    private bool comboControll;
+
+    private float timeCross = 1.3f;
+    private bool comboControl;
 
     private bool isDead;
 
+    
     void Start()
     {
-        // Iniciando variaveis junto ao game com componentes para sua função.
         playerRigidBody = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
         currentSpeed = playerSpeed;
     }
 
-    void Update()
+    private void Update()
     {
-        // Iniciando a função de PlayerMove a todo momento.
         PlayerMove();
         UpdateAnimator();
 
@@ -41,29 +43,27 @@ public class PlayerController : MonoBehaviour
             {
                 PlayerJab();
                 punchCount++;
-                if (!comboControll)
+                if (!comboControl)
                 {
-
                     StartCoroutine(CrossController());
-                }
+                }   
             }
-
             else if (punchCount >= 2)
             {
                 PlayerCross();
                 punchCount = 0;
             }
-            StopCoroutine(CrossController());
-        }
+            StopCoroutine(CrossController());            
+        }        
     }
 
     private void FixedUpdate()
     {
-        // Alterar valor de isWalking dependendo se o player estiver se movendo ou não
         if (playerDirection.x != 0 || playerDirection.y != 0)
         {
             isWalking = true;
-        } else
+        }
+        else
         {
             isWalking = false;
         }
@@ -73,14 +73,13 @@ public class PlayerController : MonoBehaviour
 
     void PlayerMove()
     {
-        // Colocando para playerDirection receber 2 vetores, horizontal e vertical.
         playerDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        if (playerDirection.x < 0 && playerFacingRigth)
+        
+        if (playerDirection.x < 0 && playerFacingRight)
         {
             Flip();
         }
-        else if (playerDirection.x > 0  && !playerFacingRigth)
+        else if (playerDirection.x > 0 && !playerFacingRight)
         {
             Flip();
         }
@@ -88,14 +87,12 @@ public class PlayerController : MonoBehaviour
 
     void UpdateAnimator()
     {
-        // Mudar o parametro do animator de acordo com a váriavel isWalking
         playerAnimator.SetBool("isWalking", isWalking);
     }
 
     void Flip()
     {
-        playerFacingRigth = !playerFacingRigth;
-
+        playerFacingRight = !playerFacingRight;
         transform.Rotate(0, 180, 0);
     }
 
@@ -103,18 +100,20 @@ public class PlayerController : MonoBehaviour
     {
         playerAnimator.SetTrigger("isJab");
     }
-    
+
     void PlayerCross()
     {
         playerAnimator.SetTrigger("isCross");
     }
-
     IEnumerator CrossController()
     {
-        comboControll = true;
+        comboControl = true;
+
         yield return new WaitForSeconds(timeCross);
         punchCount = 0;
-        comboControll = false;
+
+        comboControl = false;
+
     }
 
     void ZeroSpeed()

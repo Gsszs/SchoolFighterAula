@@ -3,7 +3,7 @@ using UnityEngine;
 public class Attack : MonoBehaviour
 {
     public int damage;
-
+    
     void Start()
     {
         
@@ -18,10 +18,10 @@ public class Attack : MonoBehaviour
     {
         EnemyMeleeController enemy = collision.GetComponent<EnemyMeleeController>();
 
-        // Se a colisão foi com um inimigo
-        if (enemy != null )
+        if (enemy != null)
         {
-            enemy.TakeTamage(damage);
+            enemy.TakeDamage(damage);
         }
     }
+
 }

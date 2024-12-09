@@ -13,7 +13,7 @@ public class LevelLoader : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             StartCoroutine(CarregarFase("Fase1"));
         }
@@ -22,9 +22,7 @@ public class LevelLoader : MonoBehaviour
     IEnumerator CarregarFase(string nomeFase)
     {
         transition.SetTrigger("Start");
-
         yield return new WaitForSeconds(1f);
-
         SceneManager.LoadScene(nomeFase);
     }
 }

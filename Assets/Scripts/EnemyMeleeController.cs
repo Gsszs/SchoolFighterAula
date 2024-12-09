@@ -1,25 +1,26 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyMeleeController : MonoBehaviour
 {
-
     private Rigidbody2D rb;
     private Animator animator;
 
-    public bool facingRigth;
-    private bool previousDirectionRigth;
-
-    public bool isDead;
-    private bool isWalking;
-
+    public bool isDead;    
+    
+    public bool facingRight;
+    public bool previousDirectionRight;
     private Transform target;
 
     private float enemySpeed = 0.3f;
     private float currentSpeed;
-    private float walkTimer;
+
+    private bool isWalking;
 
     private float horizontalForce;
     private float verticalForce;
+
+    private float walkTimer;
 
     private float attackRate = 1f;
     private float nextAttack;
@@ -28,9 +29,9 @@ public class EnemyMeleeController : MonoBehaviour
     public int currentHealth;
 
     public float staggerTime = 0.5f;
-    public float damageTimer;
+    private float damageTimer;
     public bool isTakingDamage;
-
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -38,30 +39,30 @@ public class EnemyMeleeController : MonoBehaviour
         target = FindAnyObjectByType<PlayerController>().transform;
 
         currentSpeed = enemySpeed;
-
         currentHealth = maxHealth;
     }
 
     void Update()
     {
-        if (target.position.x < transform.position.x)
+        if (target.position.x < this.transform.position.x)
         {
-            facingRigth = false;
-        } else
+            facingRight = false;
+        }
+        else
         {
-            facingRigth = true;
+            facingRight = true;
         }
 
-        if (facingRigth && !previousDirectionRigth)
+        if (facingRight && !previousDirectionRight)
         {
             this.transform.Rotate(0, 180, 0);
-            previousDirectionRigth = true;
+            previousDirectionRight = true;
         }
 
-        if (!facingRigth && previousDirectionRigth)
+        if (!facingRight && previousDirectionRight)
         {
             this.transform.Rotate(0, -180, 0);
-            previousDirectionRigth = false;
+            previousDirectionRight = false;
         }
 
         walkTimer += Time.deltaTime;
@@ -75,14 +76,20 @@ public class EnemyMeleeController : MonoBehaviour
             isWalking = true;
         }
 
-        if (damageTimer >= staggerTime)
+        if (isTakingDamage && !isDead)
         {
-            isTakingDamage = false;
-            damageTimer = 0;
+            damageTimer += Time.deltaTime;
 
-            ResetSpeed();
+            ZeroSpeed();
+
+            if (damageTimer >= staggerTime)
+            {
+                isTakingDamage = false;
+                damageTimer = 0;
+
+                ResetSpeed();
+            }
         }
-
         UpdateAnimator();
     }
 
@@ -91,7 +98,6 @@ public class EnemyMeleeController : MonoBehaviour
         if (!isDead)
         {
             Vector3 targetDistance = target.position - this.transform.position;
-
             horizontalForce = targetDistance.x / Mathf.Abs(targetDistance.x);
 
             if (walkTimer >= Random.Range(1f, 2f))
@@ -121,7 +127,7 @@ public class EnemyMeleeController : MonoBehaviour
         animator.SetBool("isWalking", isWalking);
     }
 
-    public void TakeTamage (int damage)
+    public void TakeDamage(int damage)
     {
         if (!isDead)
         {
@@ -129,7 +135,7 @@ public class EnemyMeleeController : MonoBehaviour
 
             currentHealth -= damage;
 
-            animator.SetTrigger("hitDamage");
+            animator.SetTrigger("HitDamage");
 
             if (currentHealth <= 0)
             {
